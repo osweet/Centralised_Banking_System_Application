@@ -8,6 +8,7 @@ import com.example.bma.repository.RoleRepository;
 import com.example.bma.repository.UserRepository;
 import com.example.bma.util.BankManagementUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -21,6 +22,9 @@ public class RegistrationService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserResponseModel addNewUser(UserRequestModel userRequestModel) {
         if (userRepository.existsUserEntityByUserContact(userRequestModel.getUserContact())) {
@@ -55,7 +59,7 @@ public class RegistrationService {
         newUserEntity.setUserLastName(userRequestModel.getUserLastName().trim());
         newUserEntity.setUserContact(userRequestModel.getUserContact());
         newUserEntity.setUserEmail(userRequestModel.getUserEmail().trim());
-        newUserEntity.setUserPassword(userRequestModel.getUserPassword().trim());
+        newUserEntity.setUserPassword(passwordEncoder.encode(userRequestModel.getUserPassword().trim()));
         newUserEntity.getUserRoles().add(roleRepository.findRoleEntityByRoleName("USER"));
         newUserEntity.setLastUpdatedOn(currentDateTime);
         newUserEntity.setLastUpdatedBy(userId);

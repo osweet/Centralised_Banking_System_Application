@@ -21,18 +21,4 @@ public class RoleEntity {
 
     @Column(name = "role_description", nullable = false)
     private String roleDescription;
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "last_updated_on", nullable = false)
-    private Date lastUpdatedOn;
-
-    @Column(name = "last_updated_by", nullable = false)
-    private String lastUpdatedBy;
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "created_on", nullable = false)
-    private Date createdOn;
-
-    @Column(name = "created_by", nullable = false)
-    private String createdBy;
 }
