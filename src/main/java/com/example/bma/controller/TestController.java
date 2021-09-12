@@ -6,10 +6,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/bma/api")
-public class HelloController {
+public class TestController {
 
-    @GetMapping("/hello")
-    public String sayHello() {
-        return "Hello";
+    @GetMapping("/user")
+    public String user() {
+        return "Welcome, User";
+    }
+
+    @GetMapping("/admin")
+    public String admin() {
+        return "You must be an admin";
     }
 }

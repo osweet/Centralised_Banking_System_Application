@@ -2,9 +2,12 @@ package com.example.bma.controller.security;
 
 import com.example.bma.models.request.security.JwtAuthenticationRequestModel;
 import com.example.bma.models.response.security.JwtAuthenticationResponseModel;
+import com.example.bma.response.ErrorResponse;
+import com.example.bma.response.ResponseMetadata;
 import com.example.bma.service.security.JwtTokenDetailsService;
 import com.example.bma.service.security.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,7 +39,10 @@ public class JwtAuthenticationController {
             );
         }
         catch (BadCredentialsException exception) {
-            throw new Exception("Invalid Credentials");
+            ResponseMetadata metadata = new ResponseMetadata(
+                    HttpStatus.NOT_FOUND.value(), exception.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(metadata));
         }
 
         final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(requestModel.getUsername());
