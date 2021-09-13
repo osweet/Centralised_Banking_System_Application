@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -35,8 +36,18 @@ public class UserEntity {
     @Column(name = "user_password", nullable = false)
     private String userPassword;
 
-    @OneToMany(mappedBy = "tokenUser")
-    private Set<TokenEntity> userTokens;
+    @Column(name = "user_enabled", nullable = false)
+    private Boolean userEnabled = false;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<RoleEntity> userRoles = new HashSet<>();
+
+    @OneToMany(mappedBy = "tokenUser", fetch = FetchType.LAZY)
+    private Set<TokenEntity> userTokens = new HashSet<>();
 
     @Temporal(TemporalType.DATE)
     @Column(name = "last_updated_on", nullable = false)
