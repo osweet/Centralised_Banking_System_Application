@@ -34,14 +34,13 @@ public class JwtAuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<?> authenticateUser(@RequestBody JwtAuthenticationRequestModel requestModel) throws Exception {
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(requestModel.getUsername(), requestModel.getPassword())
-            );
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    requestModel.getUsername(), requestModel.getPassword()));
         }
         catch (BadCredentialsException exception) {
             ResponseMetadata metadata = new ResponseMetadata(
-                    HttpStatus.NOT_FOUND.value(), exception.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    HttpStatus.UNAUTHORIZED.value(), "Invalid Credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(metadata));
         }
 
