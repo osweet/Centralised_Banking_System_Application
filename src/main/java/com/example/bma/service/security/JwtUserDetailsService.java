@@ -4,7 +4,6 @@ import com.example.bma.entity.RoleEntity;
 import com.example.bma.entity.UserEntity;
 import com.example.bma.repository.RoleRepository;
 import com.example.bma.repository.UserRepository;
-import com.example.bma.util.BankManagementUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,7 +32,11 @@ public class JwtUserDetailsService implements UserDetailsService {
             if (user == null) {
                 throw new BadCredentialsException("Invalid Email");
             } else {
-                return new User(user.getUserId(), user.getUserPassword(), getAuthorities(user.getUserRoles()));
+                return new User(user.getUserId(),
+                                user.getUserPassword(),
+                                user.getUserEnabled(),
+                                true, true, true,
+                                getAuthorities(user.getUserRoles()));
             }
         }
         else {

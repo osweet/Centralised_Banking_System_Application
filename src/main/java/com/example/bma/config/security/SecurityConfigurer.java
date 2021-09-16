@@ -38,9 +38,9 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/bma/api/admin").hasRole("ADMIN")
-                .antMatchers("/bma/api/user").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/bma/api/register/*").permitAll()
+                .antMatchers("/bma/api/admin/*").hasRole("ADMIN")
+                .antMatchers("/bma/api/user/*").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/bma/api/register").permitAll()
                 .antMatchers("/bma/api/authenticate").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

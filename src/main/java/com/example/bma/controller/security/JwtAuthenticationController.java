@@ -2,8 +2,8 @@ package com.example.bma.controller.security;
 
 import com.example.bma.models.request.security.JwtAuthenticationRequestModel;
 import com.example.bma.models.response.security.JwtAuthenticationResponseModel;
-import com.example.bma.response.ErrorResponse;
-import com.example.bma.response.ResponseMetadata;
+import com.example.bma.response.metadata.CommonResponseMetadataWithMessage;
+import com.example.bma.response.template.ErrorResponse;
 import com.example.bma.service.security.JwtTokenDetailsService;
 import com.example.bma.service.security.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +32,16 @@ public class JwtAuthenticationController {
     private JwtTokenDetailsService jwtTokenDetailsService;
 
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticateUser(@RequestBody JwtAuthenticationRequestModel requestModel) throws Exception {
+    public ResponseEntity<?> authenticateUser(@RequestBody JwtAuthenticationRequestModel requestModel) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     requestModel.getUsername(), requestModel.getPassword()));
         }
         catch (BadCredentialsException exception) {
-            ResponseMetadata metadata = new ResponseMetadata(
+            CommonResponseMetadataWithMessage metadata = new CommonResponseMetadataWithMessage(
                     HttpStatus.UNAUTHORIZED.value(), "Invalid Credentials");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse(metadata));
+                    .body(new ErrorResponse<>(metadata));
         }
 
         final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(requestModel.getUsername());
