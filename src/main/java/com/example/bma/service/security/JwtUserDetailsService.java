@@ -44,7 +44,10 @@ public class JwtUserDetailsService implements UserDetailsService {
             if (user == null) {
                 throw new BadCredentialsException("Invalid Credentials");
             } else {
-                return new User(user.getUserId(), user.getUserPassword(), getAuthorities(user.getUserRoles()));
+                return new User(user.getUserId(),
+                                user.getUserPassword(),
+                        user.getUserEnabled(), true, true, true,
+                        getAuthorities(user.getUserRoles()));
             }
         }
     }
