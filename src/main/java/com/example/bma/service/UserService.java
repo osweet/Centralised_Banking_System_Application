@@ -10,6 +10,9 @@ import com.example.bma.repository.UserRepository;
 import com.example.bma.util.BankManagementUtility;
 import com.example.bma.util.UserDetailsValidationUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -50,8 +53,9 @@ public class UserService {
         }
     }
 
-    public List<UserResponseModel> getAllUserList() {
-        List<UserEntity> userEntities = userRepository.findAll();
+    public List<UserResponseModel> getAllUserList(int pageNumber, int PageSize) {
+        Pageable pageWithSpecificNumberOfRecord = PageRequest.of(pageNumber, PageSize);
+        Page<UserEntity> userEntities = userRepository.findAll(pageWithSpecificNumberOfRecord);
         if (userEntities.isEmpty()) {
             throw new NoRecordAvailableException("No User Record Available");
         }

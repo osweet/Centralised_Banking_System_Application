@@ -4,10 +4,9 @@ import com.example.bma.exception.InformationAlreadyExistsException;
 import com.example.bma.exception.InvalidDataException;
 import com.example.bma.models.request.UserRequestModel;
 import com.example.bma.models.response.UserResponseModel;
-import com.example.bma.response.ErrorResponse;
-import com.example.bma.response.ResponseMetadata;
-import com.example.bma.response.ResponsePayload;
-import com.example.bma.response.SuccessResponse;
+import com.example.bma.response.metadata.CommonResponseMetadataWithMessage;
+import com.example.bma.response.template.ErrorResponse;
+import com.example.bma.response.template.SuccessResponse;
 import com.example.bma.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,20 +27,19 @@ public class RegisterController {
     public ResponseEntity<?> addNewUser(@RequestBody UserRequestModel userRequestModel) {
         try {
             UserResponseModel responseModel = userService.addNewUser(userRequestModel);
-            ResponseMetadata metadata = new ResponseMetadata(HttpStatus.CREATED.value(),
-                    "Added New User");
-            ResponsePayload<UserResponseModel> payload = new ResponsePayload<>(responseModel);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResponse<>(metadata, payload));
+            CommonResponseMetadataWithMessage metadata =
+                    new CommonResponseMetadataWithMessage(HttpStatus.CREATED.value(), "Added New User");
+            return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResponse<>(metadata, responseModel));
         }
         catch (InformationAlreadyExistsException exception) {
-            ResponseMetadata metadata = new ResponseMetadata(HttpStatus.CONFLICT.value(),
-                    exception.getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(metadata));
+            CommonResponseMetadataWithMessage metadata =
+                    new CommonResponseMetadataWithMessage(HttpStatus.CONFLICT.value(), exception.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse<>(metadata));
         }
         catch (InvalidDataException exception) {
-            ResponseMetadata metadata = new ResponseMetadata(HttpStatus.NOT_ACCEPTABLE.value(),
-                    exception.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponse(metadata));
+            CommonResponseMetadataWithMessage metadata =
+                    new CommonResponseMetadataWithMessage(HttpStatus.NOT_ACCEPTABLE.value(), exception.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorResponse<>(metadata));
         }
     }
 }
