@@ -23,8 +23,8 @@ public class RegisterController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("")
-    public ResponseEntity<?> addNewUser(@RequestBody UserRequestModel userRequestModel) {
+    @PostMapping("/user")
+    public ResponseEntity<?> registerNewUser(@RequestBody UserRequestModel userRequestModel) {
         try {
             UserResponseModel responseModel = userService.addNewUser(userRequestModel);
             CommonResponseMetadataWithMessage metadata =

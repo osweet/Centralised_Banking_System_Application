@@ -40,7 +40,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/bma/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/bma/api/user/**").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/bma/api/register").permitAll()
+                .antMatchers("/bma/api/register/user").permitAll()
                 .antMatchers("/bma/api/authenticate").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
