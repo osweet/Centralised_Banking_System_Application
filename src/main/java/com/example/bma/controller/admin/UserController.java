@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    private final int DEFAULT_PAGE_NUMBER = 0;
+    private final int DEFAULT_PAGE_NUMBER = 1;
     private final int DEFAULT_PAGE_SIZE = 5;
 
     @GetMapping("/all")
@@ -34,9 +34,9 @@ public class UserController {
         try {
             if (pageNumber == null) pageNumber = DEFAULT_PAGE_NUMBER;
             if (pageSize == null) pageSize = DEFAULT_PAGE_SIZE;
-            List<UserResponseModel> responseModels = userService.getAllUserList(pageNumber, pageSize);
+            List<UserResponseModel> responseModels = userService.getAllUserList(pageNumber-1, pageSize);
             GetAllDataResponseMetadata metadata = new GetAllDataResponseMetadata(HttpStatus.FOUND.value(),
-                    pageNumber+1, pageSize);
+                    pageNumber, pageSize);
             return ResponseEntity.status(HttpStatus.FOUND).body(new SuccessResponse<>(metadata, responseModels));
         }
         catch (NoRecordAvailableException exception) {
