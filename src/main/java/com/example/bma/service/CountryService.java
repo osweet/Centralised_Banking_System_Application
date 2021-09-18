@@ -2,11 +2,13 @@ package com.example.bma.service;
 
 import com.example.bma.entity.CountryEntity;
 import com.example.bma.exception.InformationAlreadyExistsException;
+import com.example.bma.exception.InvalidDataException;
 import com.example.bma.models.request.CountryRequestModel;
 import com.example.bma.models.response.CountryResponseModel;
 import com.example.bma.repository.CountryRepository;
 import com.example.bma.service.security.JwtTokenDetailsService;
 import com.example.bma.util.BankManagementUtility;
+import com.example.bma.util.DetailsValidationUtility;
 import com.example.bma.util.JwtUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,10 @@ public class CountryService {
     private JwtTokenDetailsService jwtTokenDetailsService;
 
     public CountryResponseModel addNewCountry(CountryRequestModel countryRequestModel) {
+        if (!DetailsValidationUtility.isNameValid(countryRequestModel.getCountryName(), false))
+            throw new InvalidDataException("Invalid Country Name: "+countryRequestModel.getCountryName());
+        if (!DetailsValidationUtility.isNameValid(countryRequestModel.getCountryShortName(), false))
+            throw new InvalidDataException("Invalid Country Short Name: "+countryRequestModel.getCountryShortName());
         if (countryRepository.existsCountryEntityByCountryName(countryRequestModel.getCountryName()))
             throw new InformationAlreadyExistsException("Country With Name Already Exists: "
                     +countryRequestModel.getCountryName());
@@ -45,20 +51,17 @@ public class CountryService {
     }
 
     private CountryEntity getCountryEntityFromModel(CountryRequestModel requestModel) {
-        Date currentDateTime = BankManagementUtility.getCurrentDateTime();
-
         CountryEntity entity = new CountryEntity();
         entity.setCountryId(generateCountryId());
         entity.setCountryName(requestModel.getCountryName());
         entity.setCountryShortName(requestModel.getCountryShortName());
-        entity.setLastUpdatedOn(currentDateTime);
+        entity.setLastUpdatedOn(BankManagementUtility.getCurrentDateTime());
         entity.setLastUpdatedBy(jwtTokenDetailsService.extractUsername(JwtUtility.getAccessToken()));
-
         return entity;
     }
 
     private String generateCountryId() {
-        StringBuilder countryId = new StringBuilder("COUN");
+        StringBuilder countryId = new StringBuilder("CNTR");
         countryId.append(BankManagementUtility.generateIdNumberByDigit(6));
         if (countryRepository.existsById(countryId.toString())) {
             return generateCountryId();

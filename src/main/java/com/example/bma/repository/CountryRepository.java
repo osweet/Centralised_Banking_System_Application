@@ -7,4 +7,6 @@ public interface CountryRepository extends JpaRepository<CountryEntity, String> 
 
     Boolean existsCountryEntityByCountryName(String name);
     Boolean existsCountryEntityByCountryShortName(String shortName);
+
+    CountryEntity findCountryEntityByCountryName(String name);
 }

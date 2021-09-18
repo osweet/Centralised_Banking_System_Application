@@ -11,12 +11,12 @@ public final class DetailsValidationUtility {
 
     public static boolean isEmailValid(String email) {
         Pattern pat = Pattern.compile(emailRegex);
-        return (email == null || !pat.matcher(email).matches());
+        return (!isTextEmpty(email) && pat.matcher(email).matches());
     }
 
     public static boolean isContactNumberValid(Long contactNumber) {
         Pattern pattern = Pattern.compile(contactNumberRegex);
-        return  (contactNumber == null || !pattern.matcher(Long.toString(contactNumber)).matches());
+        return  (!isTextEmpty(Long.toString(contactNumber)) && pattern.matcher(Long.toString(contactNumber)).matches());
     }
 
     public static boolean isNameValid(String name, boolean canBeEmptyOrNull) {
@@ -24,14 +24,22 @@ public final class DetailsValidationUtility {
             if (isTextEmpty(name)) return true;
             else return name.chars().allMatch(Character::isLetter);
         }
-        else return !isTextEmpty(name) && name.chars().allMatch(Character::isLetter);
+        else return !isTextEmpty(name) && isTextContainsOnlyLettersAndSpace(name);
     }
 
     public static boolean isPasswordValid(String password) {
-        return isTextEmpty(password);
+        return !isTextEmpty(password);
     }
 
     public static boolean isTextEmpty(String text) {
         return text == null || text.trim().equals("");
+    }
+
+    public static boolean isTextContainsOnlyLettersAndSpace(String text) {
+        for (char c : text.toCharArray()) {
+            if (!(c==32 || (c>=65 && c<=90) || (c>=97 && c<=122)))
+                return false;
+        }
+        return true;
     }
 }
