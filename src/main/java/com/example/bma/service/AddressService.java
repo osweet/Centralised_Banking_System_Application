@@ -38,7 +38,8 @@ public class AddressService {
 
     public AddressResponseModel addNewAddress(AddressRequestModel addressRequestModel) {
         //TODO: Move the below numeric validation to validation package
-        if (addressRequestModel.getBuildingNumber()<1 || addressRequestModel.getBuildingNumber()>999)
+        if (addressRequestModel.getBuildingNumber()!=null
+                && (addressRequestModel.getBuildingNumber()<1 || addressRequestModel.getBuildingNumber()>999))
             throw new InvalidDataException("Invalid Building Number: "+addressRequestModel.getBuildingNumber());
         if (DetailsValidationUtility.isTextEmpty(addressRequestModel.getLine1()))
             throw new InvalidDataException("First Line of Address Can't be Empty!");
@@ -52,10 +53,16 @@ public class AddressService {
         entity.setCreatedBy(entity.getLastUpdatedBy());
         entity.setCreatedOn(entity.getLastUpdatedOn());
         entity = addressRepository.save(entity);
-        return getAddressResponseModelFromEmtity(entity);
+        return getAddressResponseModelFromEntity(entity);
     }
 
-    private AddressResponseModel getAddressResponseModelFromEmtity(AddressEntity entity) {
+    AddressEntity getAddressEntityById(String addressId) {
+        AddressEntity entity = addressRepository.findAddressEntityByAddressId(addressId);
+        if (entity == null) throw new InvalidDataException("Invalid Address ID: "+addressId);
+        else return entity;
+    }
+
+    AddressResponseModel getAddressResponseModelFromEntity(AddressEntity entity) {
         AddressResponseModel responseModel = new AddressResponseModel();
         responseModel.setAddressId(entity.getAddressId());
         responseModel.setAddressLine(buildCompleteAddress(entity));
@@ -79,10 +86,11 @@ public class AddressService {
         CountryEntity country = countryRepository.findCountryEntityByCountryName(addressRequestModel.getCountry());
         if (country == null) throw new InvalidDataException("Invalid Country Name: "+addressRequestModel.getCountry());
 
-        StateEntity state = stateRepository.findStateEntityByStateName(addressRequestModel.getState());
+        StateEntity state = stateRepository.findStateEntityByStateNameAndCountry(
+                addressRequestModel.getState(), country);
         if (state == null) throw new InvalidDataException("Invalid State Name: "+addressRequestModel.getState());
 
-        CityEntity city = cityRepository.findCityEntityByCityName(addressRequestModel.getCity());
+        CityEntity city = cityRepository.findCityEntityByCityNameAndState(addressRequestModel.getCity(), state);
         if (city == null) throw new InvalidDataException("Invalid City Name: "+addressRequestModel.getCity());
 
         entity.setAddressCity(city);

@@ -10,5 +10,5 @@ public interface CityRepository extends JpaRepository<CityEntity, String> {
 
     Boolean existsCityEntityByCityNameAndState(String cityName, StateEntity state);
 
-    CityEntity findCityEntityByCityName(String name);
+    CityEntity findCityEntityByCityNameAndState(String name, StateEntity state);
 }

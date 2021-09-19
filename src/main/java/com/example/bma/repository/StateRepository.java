@@ -11,4 +11,5 @@ public interface StateRepository extends JpaRepository<StateEntity, String> {
     Boolean existsStateEntityByStateNameAndCountry(String stateName, CountryEntity country);
 
     StateEntity findStateEntityByStateName(String name);
+    StateEntity findStateEntityByStateNameAndCountry(String name, CountryEntity country);
 }
