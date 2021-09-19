@@ -25,27 +25,23 @@ public class AddressService {
     private AddressRepository addressRepository;
 
     @Autowired
-    private CountryRepository countryRepository;
-
-    @Autowired
-    private StateRepository stateRepository;
-
-    @Autowired
-    private CityRepository cityRepository;
+    private CityService cityService;
 
     @Autowired
     private JwtTokenDetailsService jwtTokenDetailsService;
 
     public AddressResponseModel addNewAddress(AddressRequestModel addressRequestModel) {
-        //TODO: Move the below numeric validation to validation package
-        if (addressRequestModel.getBuildingNumber()!=null
-                && (addressRequestModel.getBuildingNumber()<1 || addressRequestModel.getBuildingNumber()>999))
-            throw new InvalidDataException("Invalid Building Number: "+addressRequestModel.getBuildingNumber());
-        if (DetailsValidationUtility.isTextEmpty(addressRequestModel.getLine1()))
-            throw new InvalidDataException("First Line of Address Can't be Empty!");
+        // TODO: Add Validation to check if address contains any special characters
+        if (DetailsValidationUtility.isTextEmpty(addressRequestModel.getLine()))
+            throw new InvalidDataException("Address Line Can't be Empty!");
         if (DetailsValidationUtility.isTextEmpty(addressRequestModel.getLandmark()))
             throw new InvalidDataException("Address Landmark Can't Be Empty");
-        // TODO: Add Validation to check if address contains any special characters
+        if (!DetailsValidationUtility.isNameValid(addressRequestModel.getCity(), false))
+            throw new InvalidDataException("Invalid City Name: "+addressRequestModel.getCity());
+        if (!DetailsValidationUtility.isNameValid(addressRequestModel.getState(), false))
+            throw new InvalidDataException("Invalid State Name: "+addressRequestModel.getState());
+        if (!DetailsValidationUtility.isNameValid(addressRequestModel.getCountry(), false))
+            throw new InvalidDataException("Invalid Country Name: "+addressRequestModel.getCountry());
         if (!DetailsValidationUtility.isZipCodeValid(addressRequestModel.getZipcode()))
             throw new InvalidDataException("Invalid Zip Code: "+addressRequestModel.getZipcode());
 
@@ -65,7 +61,7 @@ public class AddressService {
     AddressResponseModel getAddressResponseModelFromEntity(AddressEntity entity) {
         AddressResponseModel responseModel = new AddressResponseModel();
         responseModel.setAddressId(entity.getAddressId());
-        responseModel.setAddressLine(buildCompleteAddress(entity));
+        responseModel.setAddressLine(entity.getAddressLine());
         responseModel.setLandmark(entity.getAddressLandmark());
         responseModel.setCity(entity.getAddressCity().getCityName());
         responseModel.setState(entity.getAddressCity().getState().getStateName());
@@ -77,22 +73,11 @@ public class AddressService {
     AddressEntity getAddressEntityFromModel(AddressRequestModel addressRequestModel) {
         AddressEntity entity = new AddressEntity();
         entity.setAddressId(generateAddressId());
-        entity.setAddressBuildingNumber(addressRequestModel.getBuildingNumber());
-        entity.setAddressLine1(addressRequestModel.getLine1());
-        entity.setAddressLine2(addressRequestModel.getLine2());
-        entity.setAddressLine3(addressRequestModel.getLine3());
+        entity.setAddressLine(addressRequestModel.getLine());
         entity.setAddressLandmark(addressRequestModel.getLandmark());
 
-        CountryEntity country = countryRepository.findCountryEntityByCountryName(addressRequestModel.getCountry());
-        if (country == null) throw new InvalidDataException("Invalid Country Name: "+addressRequestModel.getCountry());
-
-        StateEntity state = stateRepository.findStateEntityByStateNameAndCountry(
-                addressRequestModel.getState(), country);
-        if (state == null) throw new InvalidDataException("Invalid State Name: "+addressRequestModel.getState());
-
-        CityEntity city = cityRepository.findCityEntityByCityNameAndState(addressRequestModel.getCity(), state);
-        if (city == null) throw new InvalidDataException("Invalid City Name: "+addressRequestModel.getCity());
-
+        CityEntity city = cityService.getCityEntityByCityAndStateAndCountryName(
+                addressRequestModel.getCity(), addressRequestModel.getState(), addressRequestModel.getCountry());
         entity.setAddressCity(city);
         entity.setAddressZipCode(addressRequestModel.getZipcode());
         entity.setAddressVerified(false);
@@ -100,21 +85,6 @@ public class AddressService {
         entity.setLastUpdatedBy(jwtTokenDetailsService.extractUsername(JwtUtility.getAccessToken()));
 
         return entity;
-    }
-
-    private String buildCompleteAddress(AddressEntity entity) {
-        StringBuilder completeAddress = new StringBuilder();
-
-        if (entity.getAddressBuildingNumber() != null)
-            completeAddress.append(Integer.toString(entity.getAddressBuildingNumber())).append(", ");
-
-        completeAddress.append(entity.getAddressLine1()).append(", ");
-        if (entity.getAddressLine2() != null)
-            completeAddress.append(entity.getAddressLine2()).append(", ");
-        if (entity.getAddressLine3() != null)
-            completeAddress.append(entity.getAddressLine3()).append(", ");
-
-        return completeAddress.toString();
     }
 
     private String generateAddressId() {

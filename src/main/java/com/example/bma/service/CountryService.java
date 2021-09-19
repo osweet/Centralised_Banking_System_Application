@@ -13,8 +13,6 @@ import com.example.bma.util.JwtUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-
 @Service
 public class CountryService {
 
@@ -30,16 +28,22 @@ public class CountryService {
         if (!DetailsValidationUtility.isNameValid(countryRequestModel.getCountryShortName(), false))
             throw new InvalidDataException("Invalid Country Short Name: "+countryRequestModel.getCountryShortName());
         if (countryRepository.existsCountryEntityByCountryName(countryRequestModel.getCountryName()))
-            throw new InformationAlreadyExistsException("Country With Name Already Exists: "
+            throw new InformationAlreadyExistsException("Country Name Already Exists: "
                     +countryRequestModel.getCountryName());
         if (countryRepository.existsCountryEntityByCountryShortName(countryRequestModel.getCountryShortName()))
-            throw new InformationAlreadyExistsException("Country With Short Name Already Exists: "+
+            throw new InformationAlreadyExistsException("Country Short Name Already Exists: "+
                     countryRequestModel.getCountryShortName());
         CountryEntity entity = getCountryEntityFromModel(countryRequestModel);
         entity.setCreatedOn(entity.getLastUpdatedOn());
         entity.setCreatedBy(entity.getLastUpdatedBy());
         entity = countryRepository.save(entity);
         return getCountryResponseModelFromEntity(entity);
+    }
+
+    CountryEntity getCountryEntityByName(String name) {
+        CountryEntity country = countryRepository.findCountryEntityByCountryName(name);
+        if (country == null) throw new InvalidDataException("Invalid Country Name: "+name);
+        else return country;
     }
 
     private CountryResponseModel getCountryResponseModelFromEntity(CountryEntity entity) {

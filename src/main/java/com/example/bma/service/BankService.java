@@ -1,5 +1,6 @@
 package com.example.bma.service;
 
+import com.example.bma.entity.AddressEntity;
 import com.example.bma.entity.BankEntity;
 import com.example.bma.exception.InformationAlreadyExistsException;
 import com.example.bma.exception.InvalidDataException;
@@ -59,8 +60,10 @@ public class BankService {
         entity.setBankId(generateBankId());
         entity.setBankName(requestModel.getBankName());
         entity.setBankEmail(requestModel.getBankEmail());
-        entity.setBankAddress(addressService.getAddressEntityById
-                (addressService.addNewAddress(requestModel.getBankAddress()).getAddressId()));
+
+        AddressEntity address = addressService.getAddressEntityById(
+                addressService.addNewAddress(requestModel.getBankAddress()).getAddressId());
+        entity.setBankAddress(address);
         entity.setBankBranches(new HashSet<>());
         entity.setBankTokens(new HashSet<>());
         entity.setLastUpdatedOn(BankManagementUtility.getCurrentDateTime());

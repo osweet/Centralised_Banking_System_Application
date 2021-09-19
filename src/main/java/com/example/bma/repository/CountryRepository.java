@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CountryRepository extends JpaRepository<CountryEntity, String> {
 
-    Boolean existsCountryEntityByCountryName(String name);
-    Boolean existsCountryEntityByCountryShortName(String shortName);
+    boolean existsCountryEntityByCountryName(String name);
+    boolean existsCountryEntityByCountryShortName(String shortName);
 
     CountryEntity findCountryEntityByCountryName(String name);
 }

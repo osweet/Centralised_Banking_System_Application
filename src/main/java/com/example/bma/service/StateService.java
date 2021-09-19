@@ -22,12 +22,14 @@ public class StateService {
     private StateRepository stateRepository;
 
     @Autowired
-    private CountryRepository countryRepository;
+    private CountryService countryService;
 
     @Autowired
     private JwtTokenDetailsService jwtTokenDetailsService;
 
     public StateResponseModel addNewState(StateRequestModel requestModel) {
+        if (!DetailsValidationUtility.isNameValid(requestModel.getCountryName(), false))
+            throw new InvalidDataException("Invalid Country Name: "+requestModel.getCountryName());
         if (!DetailsValidationUtility.isNameValid(requestModel.getStateName(), false))
             throw new InvalidDataException("Invalid State Name: "+requestModel.getStateName());
 
@@ -39,6 +41,13 @@ public class StateService {
         return getStateResponseModelFromEntity(entity);
     }
 
+    StateEntity getStateEntityByStateNameAndCountryName(String stateName, String countryName) {
+        StateEntity state = stateRepository.findStateEntityByStateNameAndCountry(
+                stateName, countryService.getCountryEntityByName(countryName));
+        if (state == null) throw new InvalidDataException("Invalid State Name: "+stateName);
+        else return state;
+    }
+
     private StateResponseModel getStateResponseModelFromEntity(StateEntity entity) {
         StateResponseModel responseModel = new StateResponseModel();
         responseModel.setStateId(entity.getStateId());
@@ -48,8 +57,7 @@ public class StateService {
     }
 
     private StateEntity getStateEntityFromModel(StateRequestModel requestModel) {
-        CountryEntity country = countryRepository.findCountryEntityByCountryName(requestModel.getCountryName());
-        if (country == null) throw new InvalidDataException("Invalid Country Name: "+requestModel.getCountryName());
+        CountryEntity country = countryService.getCountryEntityByName(requestModel.getCountryName());
 
         if (stateRepository.existsStateEntityByStateNameAndCountry(requestModel.getStateName(), country))
             throw new InformationAlreadyExistsException("State Name Already Exists: "+requestModel.getStateName());

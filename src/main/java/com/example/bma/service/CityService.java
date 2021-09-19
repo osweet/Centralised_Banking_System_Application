@@ -7,7 +7,6 @@ import com.example.bma.exception.InvalidDataException;
 import com.example.bma.models.request.CityRequestModel;
 import com.example.bma.models.response.CityResponseModel;
 import com.example.bma.repository.CityRepository;
-import com.example.bma.repository.StateRepository;
 import com.example.bma.service.security.JwtTokenDetailsService;
 import com.example.bma.util.BankManagementUtility;
 import com.example.bma.util.DetailsValidationUtility;
@@ -22,12 +21,16 @@ public class CityService {
     private CityRepository cityRepository;
 
     @Autowired
-    private StateRepository stateRepository;
+    private StateService stateService;
 
     @Autowired
     private JwtTokenDetailsService jwtTokenDetailsService;
 
     public CityResponseModel addNewCity(CityRequestModel requestModel) {
+        if (!DetailsValidationUtility.isNameValid(requestModel.getCountryName(), false))
+            throw new InvalidDataException("Invalid Country Name: "+requestModel.getCountryName());
+        if (!DetailsValidationUtility.isNameValid(requestModel.getStateName(), false))
+            throw new InvalidDataException("Invalid State Name: "+requestModel.getStateName());
         if (!DetailsValidationUtility.isNameValid(requestModel.getCityName(), false))
             throw new InvalidDataException("Invalid City Name: "+requestModel.getCityName());
 
@@ -38,17 +41,25 @@ public class CityService {
         return getCityResponseModelFromEntity(entity);
     }
 
+    CityEntity getCityEntityByCityAndStateAndCountryName(String cityName, String stateName, String countryName) {
+        CityEntity city = cityRepository.findCityEntityByCityNameAndState(
+                cityName, stateService.getStateEntityByStateNameAndCountryName(stateName, countryName));
+        if (city == null) throw new InvalidDataException("Invalid City Name: "+cityName);
+        else return city;
+    }
+
     private CityResponseModel getCityResponseModelFromEntity(CityEntity entity) {
         CityResponseModel responseModel = new CityResponseModel();
         responseModel.setCityId(entity.getCityId());
         responseModel.setCityName(entity.getCityName());
         responseModel.setStateName(entity.getState().getStateName());
+        responseModel.setCountryName(entity.getState().getCountry().getCountryName());
         return responseModel;
     }
 
     private CityEntity getCityEntityFromModel(CityRequestModel requestModel) {
-        StateEntity state = stateRepository.findStateEntityByStateName(requestModel.getStateName());
-        if (state == null) throw new InvalidDataException("Invalid State Name: "+requestModel.getStateName());
+        StateEntity state = stateService.getStateEntityByStateNameAndCountryName(
+                requestModel.getStateName(), requestModel.getCountryName());
 
         if (cityRepository.existsCityEntityByCityNameAndState(requestModel.getCityName(), state))
             throw new InformationAlreadyExistsException("City Name Already Exists: "+requestModel.getCityName());

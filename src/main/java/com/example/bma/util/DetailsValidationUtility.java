@@ -25,11 +25,10 @@ public final class DetailsValidationUtility {
     }
 
     public static boolean isNameValid(String name, boolean canBeEmptyOrNull) {
-        if (canBeEmptyOrNull) {
-            if (isTextEmpty(name)) return true;
-            else return name.chars().allMatch(Character::isLetter);
+        if (isTextEmpty(name)) {
+            return canBeEmptyOrNull;
         }
-        else return !isTextEmpty(name) && isTextContainsOnlyLettersAndSpace(name);
+        else return isTextContainsOnlyLettersAndSpace(name);
     }
 
     public static boolean isPasswordValid(String password) {

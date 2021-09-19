@@ -13,4 +13,7 @@ public class CityRequestModel {
 
     @JsonProperty("state_name")
     private String stateName;
+
+    @JsonProperty("country_name")
+    private String countryName;
 }

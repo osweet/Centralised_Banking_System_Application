@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BankRepository extends JpaRepository<BankEntity, String> {
 
-    Boolean existsBankEntityByBankName(String name);
-    Boolean existsBankEntityByBankEmail(String email);
+    boolean existsBankEntityByBankName(String name);
+    boolean existsBankEntityByBankEmail(String email);
 }

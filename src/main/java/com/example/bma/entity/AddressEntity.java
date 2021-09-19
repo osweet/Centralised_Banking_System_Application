@@ -16,17 +16,8 @@ public class AddressEntity {
     @Column(name = "address_id", nullable = false, unique = true, length = 10)
     private String addressId;
 
-    @Column(name = "address_building_number", length = 3)
-    private Integer addressBuildingNumber;
-
-    @Column(name = "address_line_1", nullable = false)
-    private String addressLine1;
-
-    @Column(name = "address_line_2")
-    private String addressLine2;
-
-    @Column(name = "address_line_3")
-    private String addressLine3;
+    @Column(name = "address_line", nullable = false)
+    private String addressLine;
 
     @Column(name = "address_landmark", nullable = false)
     private String addressLandmark;
@@ -49,9 +40,9 @@ public class AddressEntity {
     private String lastUpdatedBy;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "created_on", nullable = false)
+    @Column(name = "created_on", nullable = false, updatable = false)
     private Date createdOn;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by", nullable = false, updatable = false)
     private String createdBy;
 }
