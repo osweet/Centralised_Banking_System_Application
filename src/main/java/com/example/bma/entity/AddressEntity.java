@@ -16,6 +16,9 @@ public class AddressEntity {
     @Column(name = "address_id", nullable = false, unique = true, length = 10)
     private String addressId;
 
+    @Column(name = "address_building_number", length = 3)
+    private Integer addressBuildingNumber;
+
     @Column(name = "address_line_1", nullable = false)
     private String addressLine1;
 
@@ -28,17 +31,15 @@ public class AddressEntity {
     @Column(name = "address_landmark", nullable = false)
     private String addressLandmark;
 
-    @Column(name = "address_city", nullable = false)
-    private String addressCity;
-
-    @Column(name = "address_state", nullable = false)
-    private String addressState;
-
-    @Column(name = "address_country", nullable = false)
-    private String addressCountry;
+    @ManyToOne
+    @JoinColumn(name = "address_city", nullable = false)
+    private CityEntity addressCity;
 
     @Column(name = "address_zip_code", nullable = false, length = 10)
-    private Integer addressZipCode;
+    private String addressZipCode;
+
+    @Column(name = "address_verified", nullable = false)
+    private Boolean addressVerified;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "last_updated_on", nullable = false)

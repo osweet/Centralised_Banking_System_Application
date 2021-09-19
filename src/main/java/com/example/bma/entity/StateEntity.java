@@ -20,7 +20,7 @@ public class StateEntity {
     private String stateName;
 
     @ManyToOne
-    @JoinColumn(name = "country")
+    @JoinColumn(name = "country", nullable = false)
     private CountryEntity country;
 
     @Temporal(TemporalType.DATE)

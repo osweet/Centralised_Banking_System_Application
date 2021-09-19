@@ -1,4 +1,4 @@
-package com.example.bma.models.common;
+package com.example.bma.models.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -6,7 +6,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AddressModel {
+public class AddressRequestModel {
+
+    @JsonProperty("address_building_number")
+    private Integer buildingNumber;
 
     @JsonProperty("address_line1")
     private String line1;
@@ -30,5 +33,5 @@ public class AddressModel {
     private String country;
 
     @JsonProperty("address_zipcode")
-    private Integer zipcode;
+    private String zipcode;
 }

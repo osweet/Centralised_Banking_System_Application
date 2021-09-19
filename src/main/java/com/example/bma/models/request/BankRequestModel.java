@@ -1,6 +1,5 @@
 package com.example.bma.models.request;
 
-import com.example.bma.models.common.AddressModel;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,5 +15,5 @@ public class BankRequestModel {
     private String bankEmail;
 
     @JsonProperty("bank_address")
-    private AddressModel bankAddress;
+    private AddressRequestModel bankAddress;
 }
