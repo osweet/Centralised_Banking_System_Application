@@ -45,9 +45,9 @@ public class BranchEntity {
     private String lastUpdatedBy;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "created_on", nullable = false)
+    @Column(name = "created_on", nullable = false, updatable = false)
     private Date createdOn;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by", nullable = false, updatable = false)
     private String createdBy;
 }

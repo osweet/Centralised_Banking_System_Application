@@ -2,13 +2,14 @@ package com.example.bma.service;
 
 import com.example.bma.entity.UserEntity;
 import com.example.bma.exception.InformationAlreadyExistsException;
+import com.example.bma.exception.InvalidDataException;
 import com.example.bma.exception.NoRecordAvailableException;
 import com.example.bma.models.request.UserRequestModel;
 import com.example.bma.models.response.UserResponseModel;
 import com.example.bma.repository.RoleRepository;
 import com.example.bma.repository.UserRepository;
 import com.example.bma.util.BankManagementUtility;
-import com.example.bma.util.UserDetailsValidationUtility;
+import com.example.bma.util.DetailsValidationUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,12 +42,18 @@ public class UserService {
             throw new InformationAlreadyExistsException("Email Already Exists");
         }
         else {
-            UserDetailsValidationUtility.isEmailValid(userRequestModel.getUserEmail());
-            UserDetailsValidationUtility.isContactNumberValid(userRequestModel.getUserContact());
-            UserDetailsValidationUtility.isNameValid(userRequestModel.getUserFirstName(), false);
-            UserDetailsValidationUtility.isNameValid(userRequestModel.getUserLastName(), false);
-            UserDetailsValidationUtility.isNameValid(userRequestModel.getUserMiddleName(), true);
-            UserDetailsValidationUtility.isPasswordValid(userRequestModel.getUserPassword());
+            if (!DetailsValidationUtility.isEmailValid(userRequestModel.getUserEmail()))
+                throw new InvalidDataException("Invalid Email: "+userRequestModel.getUserEmail());
+            if (!DetailsValidationUtility.isContactNumberValid(userRequestModel.getUserContact()))
+                throw new InvalidDataException("Invalid Contact Number: "+userRequestModel.getUserContact());
+            if (!DetailsValidationUtility.isNameValid(userRequestModel.getUserFirstName(), false))
+                throw new InvalidDataException("Invalid First Name: "+userRequestModel.getUserFirstName());
+            if (!DetailsValidationUtility.isNameValid(userRequestModel.getUserLastName(), false))
+                throw new InvalidDataException("Invalid Last Name: "+userRequestModel.getUserLastName());
+            if (!DetailsValidationUtility.isNameValid(userRequestModel.getUserMiddleName(), true))
+                throw new InvalidDataException("Invalid Middle Name: "+userRequestModel.getUserMiddleName());
+            if (!DetailsValidationUtility.isPasswordValid(userRequestModel.getUserPassword()))
+                throw new InvalidDataException("Password Can't be Empty");
 
             UserEntity newUserEntity = getUserEntityFromModel(userRequestModel);
             return getUserResponseModelFromEntity(userRepository.save(newUserEntity));
@@ -105,8 +112,8 @@ public class UserService {
 
     private String generateUserId() {
         StringBuilder userId = new StringBuilder("USER");
-        userId.append(BankManagementUtility.generateNumberIdNumberByDigit(6));
-        if (userRepository.existsUserEntityByUserId(userId.toString())) {
+        userId.append(BankManagementUtility.generateIdNumberByDigit(6));
+        if (userRepository.existsById(userId.toString())) {
             return generateUserId();
         }
         else return userId.toString();

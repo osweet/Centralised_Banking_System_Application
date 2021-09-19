@@ -6,7 +6,7 @@ import java.util.Random;
 
 public final class BankManagementUtility {
 
-    public static String generateNumberIdNumberByDigit(int numberLength) {
+    public static String generateIdNumberByDigit(int numberLength) {
         StringBuilder idNumberString = new StringBuilder();
 
         Random objGenerator = new Random();

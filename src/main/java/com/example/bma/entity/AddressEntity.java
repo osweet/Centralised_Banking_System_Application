@@ -16,29 +16,21 @@ public class AddressEntity {
     @Column(name = "address_id", nullable = false, unique = true, length = 10)
     private String addressId;
 
-    @Column(name = "address_line_1", nullable = false)
-    private String addressLine1;
-
-    @Column(name = "address_line_2")
-    private String addressLine2;
-
-    @Column(name = "address_line_3")
-    private String addressLine3;
+    @Column(name = "address_line", nullable = false)
+    private String addressLine;
 
     @Column(name = "address_landmark", nullable = false)
     private String addressLandmark;
 
-    @Column(name = "address_city", nullable = false)
-    private String addressCity;
-
-    @Column(name = "address_state", nullable = false)
-    private String addressState;
-
-    @Column(name = "address_country", nullable = false)
-    private String addressCountry;
+    @ManyToOne
+    @JoinColumn(name = "address_city", nullable = false)
+    private CityEntity addressCity;
 
     @Column(name = "address_zip_code", nullable = false, length = 10)
-    private Integer addressZipCode;
+    private String addressZipCode;
+
+    @Column(name = "address_verified", nullable = false)
+    private Boolean addressVerified;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "last_updated_on", nullable = false)
@@ -48,9 +40,9 @@ public class AddressEntity {
     private String lastUpdatedBy;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "created_on", nullable = false)
+    @Column(name = "created_on", nullable = false, updatable = false)
     private Date createdOn;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by", nullable = false, updatable = false)
     private String createdBy;
 }
