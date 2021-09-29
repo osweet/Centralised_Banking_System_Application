@@ -26,6 +26,16 @@ INSERT INTO `roles` VALUES ('ROLE000001','Admin Role','ADMIN'),('ROLE000002','Us
 UNLOCK TABLES;
 
 --
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES ('USER000001','USER000001','2021-09-18','USER000001','2021-09-18',9876543210,'admin@bma.com',_binary '','ADMIN','ADMIN','','$2a$10$RhaxzowA5wmmmA/cdZzC.u1rGgmyywpPt6ne7Fr/VPf4T7U4Rb9Ti');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping data for table `user_roles`
 --
 
@@ -35,15 +45,6 @@ INSERT INTO `user_roles` VALUES ('USER000001','ROLE000001');
 /*!40000 ALTER TABLE `user_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Dumping data for table `users`
---
-
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('USER000001','USER000001','2021-09-18','USER000001','2021-09-18',9876543210,'admin@bma.com',_binary '','ADMIN','ADMIN','','$2a$10$RhaxzowA5wmmmA/cdZzC.u1rGgmyywpPt6ne7Fr/VPf4T7U4Rb9Ti');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
